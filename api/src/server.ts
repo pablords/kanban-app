@@ -8,8 +8,8 @@ import http from "http"
 
 const numCPUS = os.cpus().length
 
-if (cluster.isMaster) {
-  for (let i = 0; i < numCPUS; i++) {
+if (cluster.isPrimary) {
+  for (let i = 0; i < numCPUS; i += 2) {
     cluster.fork()
   }
   cluster.on("exit", (worker, code, signal) => {
