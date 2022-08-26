@@ -1,0 +1,45 @@
+version: '3'
+
+
+services:
+  kanban-db:
+    env_file: ./api/.env
+    image: mysql:5.7
+    restart: always
+    container_name: kanban-db
+    ports:
+      - 3306:3306
+    networks:
+      - services
+    volumes:
+      - kanban-db-data:/var/lib/mysql
+    command: --innodb_use_native_aio=0 --socket=/tmp/mysql.sock --bind_address=0.0.0.0
+
+  kanban-api:
+    restart: unless-stopped
+    env_file: ./api/.env
+    image: pablords/kanban-api:1.0.0
+    container_name: kanban-api
+    depends_on:
+      - kanban-db
+    build: ./api
+    ports:
+      - 5000:5000
+    networks:
+      - services
+    volumes:
+      - ./api/:/home/node/app
+    healthcheck:
+      test: curl --fail http://localhost:5000/health || exit 1
+      interval: 60s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
+    command: /bin/bash -c npm run dev --prefix ./api/
+
+volumes:
+  kanban-db-data:
+    
+networks:
+  services:
+    driver: 'bridge'
