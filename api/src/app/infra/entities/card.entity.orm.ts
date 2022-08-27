@@ -6,13 +6,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn
 } from "typeorm"
-import { BaseEntityOrm } from "./base-entity.interface"
+import { BaseEntityOrm } from "./base-entity.orm"
 
 @Entity("cards")
-export class CardEntityOrm implements BaseEntityOrm<Card> {
-    @PrimaryGeneratedColumn("uuid")
-    id: string;
-
+export class CardEntityOrm extends BaseEntityOrm implements Card {
     @Column()
     title: string;
 
@@ -21,17 +18,4 @@ export class CardEntityOrm implements BaseEntityOrm<Card> {
 
     @Column()
     list: string;
-
-    @CreateDateColumn({
-        type: "timestamp",
-        default: () => "CURRENT_TIMESTAMP(6)",
-    })
-    public createdAt: Date;
-
-    @UpdateDateColumn({
-        type: "timestamp",
-        default: () => "CURRENT_TIMESTAMP(6)",
-        onUpdate: "CURRENT_TIMESTAMP(6)",
-    })
-    public updatedAt: Date;
 }
