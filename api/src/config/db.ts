@@ -21,7 +21,7 @@ export const connection = new DataSource({
 
 connection.initialize().then(async (conn) => {
   if (process.env.DB_LOGGING) {
-    logger.info(conn)
+    logger.info(`DB is initialized: ${conn.isInitialized}`)
   }
 }).catch((error) => {
   if (process.env.NODE_ENV === "development") {
