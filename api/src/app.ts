@@ -2,7 +2,7 @@ import "reflect-metadata"
 import * as bodyParser from "body-parser"
 import { Container } from "inversify"
 import { InversifyExpressServer } from "inversify-express-utils"
-
+import errorHandlerMiddleware from "./app/middlewares/error-handler.middleware"
 import TYPES from "./app/modules/common/types"
 
 import "./app/modules/card/controllers/card.controller"
@@ -32,6 +32,8 @@ export class App {
         extended: true
       }))
       app.use(bodyParser.json())
+      app.use(errorHandlerMiddleware.logErrorMiddleware)
+      app.use(errorHandlerMiddleware.returnError)
     })
 
     const app = server.build()
