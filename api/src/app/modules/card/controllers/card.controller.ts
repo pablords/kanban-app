@@ -10,6 +10,7 @@ import { httpGet, httpPost, BaseHttpController, controller, httpPut, httpDelete 
 import TYPES from "@/app/modules/common/types"
 import InReportMiddleware from "../middlewares/in-report.middleware"
 import OutReportLogMiddleware from "../middlewares/out-report.middleware"
+import ValidateFieldsMiddleware from "../middlewares/validate-fields.middleware"
 
 @controller('')
 export class CardController extends BaseHttpController implements CardControllerMethods {
@@ -29,7 +30,7 @@ export class CardController extends BaseHttpController implements CardController
     return res.json(cards)
   }
 
-  @httpPost('/cards')
+  @httpPost('/cards', ValidateFieldsMiddleware.execute)
   async createCard (req: Request, res: Response, next: NextFunction): Promise<Response<Card>> {
     try {
       const card = await this._cardService.createCard(req.body)
@@ -49,7 +50,7 @@ export class CardController extends BaseHttpController implements CardController
     }
   }
 
-  @httpPut('/cards/:id', InReportMiddleware.execute, OutReportLogMiddleware.execute)
+  @httpPut('/cards/:id', InReportMiddleware.execute, OutReportLogMiddleware.execute, ValidateFieldsMiddleware.execute)
   async updateCard (req: Request, res: Response, next: NextFunction): Promise<Response<boolean>> {
     try {
       const updatedDto: UpdateCardDto = {

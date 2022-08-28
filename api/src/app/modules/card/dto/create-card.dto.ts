@@ -1,5 +1,6 @@
-export interface CreateCardDto{
-    title: string
-    content: string
-    list: string
+
+export interface CreateCardDto {
+    title: string;
+    content: string;
+    list: string;
 }
