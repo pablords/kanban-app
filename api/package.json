@@ -9,7 +9,7 @@
     "test:watch": "jest --watch",
     "test": "jest --detectOpenHandles --forceExit",
     "start": "node -r dotenv/config ./build/index.js",
-    "dev": "ts-node-dev -r tsconfig-paths/register -r dotenv/config --watch --respawn --transpile-only --ignore-watch node_modules ./src/server.ts",
+    "dev": "ts-node-dev -r tsconfig-paths/register -r dotenv/config --watch --respawn --transpile-only --ignore-watch node_modules ./src/app.ts",
     "build": "babel src --extensions \".js,.ts\" --out-dir build --copy-files --no-copy-ignored",
     "lint": "eslint --ext .js,.ts .",
     "lint:fix": "eslint --fix --ext .js,.ts ."
@@ -25,6 +25,7 @@
     "inversify-express-utils": "^6.4.3",
     "jwt-decode": "^3.1.2",
     "mysql2": "^2.3.2",
+    "node-input-validator": "^4.5.0",
     "reflect-metadata": "^0.1.13",
     "swagger-ui-express": "^4.1.6",
     "tsyringe": "^4.7.0",
