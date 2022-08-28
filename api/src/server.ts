@@ -1,30 +1,43 @@
-import "dotenv/config"
-import express from "express"
-import cors from "cors"
-import os from "os"
-import cluster from "cluster"
+import "reflect-metadata"
+import * as bodyParser from "body-parser"
+import { Container } from "inversify"
+import { InversifyExpressServer } from "inversify-express-utils"
+
+import TYPES from "./app/modules/common/types"
+
+import "./app/modules/card/controllers/card.controller"
+import { CardService } from "./app/modules/card/services/card.services"
+import { CardServiceMethods } from "./app/modules/card/services/services.interface"
+import { CardRepositoryMethods } from "./app/modules/card/repository/card-repository.interface"
+import { CardRepository } from "./app/modules/card/repository/card.repository"
 import { logger } from "./config/logger"
-import http from "http"
 
-const numCPUS = os.cpus().length
+const container = new Container()
 
-if (cluster.isPrimary) {
-  for (let i = 0; i < numCPUS; i += 2) {
-    cluster.fork()
+export class App {
+  constructor () {
+    this.configDependencies()
+    this.createServer()
   }
-  cluster.on("exit", (worker, code, signal) => {
-    logger.error(`worker ${worker.process.pid} died`)
-  })
-  logger.info(`Master ${process.pid} is running`)
-} else {
-  const app = express()
-  const server = http.createServer(app)
-  app.use(cors())
-  app.use(express.json())
-  server.listen(process.env.PORT, () => {
-    logger.info(
-            `Server is running on http://${process.env.APP_HOST}:${process.env.APP_PORT}`
-    )
-  })
-  logger.info(`Worker ${process.pid} started`)
+
+  configDependencies (): void {
+    container.bind<CardServiceMethods>(TYPES.CardServiceInterface).to(CardService)
+    container.bind<CardRepositoryMethods>(TYPES.CardRepositoryInterface).to(CardRepository)
+  }
+
+  createServer (): void {
+    const server: InversifyExpressServer = new InversifyExpressServer(container)
+    server.setConfig((app) => {
+      app.use(bodyParser.urlencoded({
+        extended: true
+      }))
+      app.use(bodyParser.json())
+    })
+
+    const app = server.build()
+    app.listen(process.env.APP_PORT)
+    logger.info(`Server started at port ${process.env.APP_PORT}`)
+  }
 }
+
+export default new App()

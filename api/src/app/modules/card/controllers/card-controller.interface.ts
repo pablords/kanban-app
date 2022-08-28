@@ -1,15 +1,14 @@
 import { Card } from "../card.entity"
-import { Request, Response } from "express"
-import { CreateCardDto } from "../dto/create-card.dto"
-import { UpdateCardDto } from "../dto/update-card.dto"
+import { Request, Response, NextFunction } from "express"
 
 export interface CardControllerMethods {
     createCard(
-        req: Request<CreateCardDto>,
-        res: Response
+        req: Request,
+        res: Response,
+        next: NextFunction
     ): Promise<Response<Card>>;
-    getAllCards(req: Request, res: Response): Promise<Response<Card[]>>;
-    getOneCard(req: Request, res: Response): Promise<Response<Card>>;
-    deleteCard(req: Request, res: Response): Promise<Response<boolean>>;
-    updateCard(req: Request<UpdateCardDto>, res: Response): Promise<Response<boolean>>;
+    getAllCards(req: Request, res: Response, next: NextFunction): Promise<Response<Card[]>>;
+    getOneCard(req: Request, res: Response, next: NextFunction): Promise<Response<Card>>;
+    deleteCard(req: Request, res: Response, next: NextFunction): Promise<Response<boolean>>;
+    updateCard(req: Request, res: Response, next: NextFunction): Promise<Response<boolean>>;
 }

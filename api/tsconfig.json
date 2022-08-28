@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+      "lib": ["es6", "dom"],
+      "types": ["reflect-metadata"],
       "target": "es5",
       "downlevelIteration": true,
       "module": "commonjs", /* Specify what module code is generated. */
