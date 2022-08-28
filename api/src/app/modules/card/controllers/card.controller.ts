@@ -1,14 +1,15 @@
-import { BaseController } from "../../common/base.controller"
+
 import { CardControllerMethods } from "./card-controller.interface"
 import { CardServiceMethods } from "../services/services.interface"
 import { Card } from "../card.entity"
 import { NextFunction, Request, Response } from "express"
-import { CreateCardDto } from "../dto/create-card.dto"
 import { UpdateCardDto } from "../dto/update-card.dto"
-import errorHandlerMiddleware from "../../../middlewares/error-handler"
+import errorHandlerMiddleware from "../../../middlewares/error-handler.middleware"
 import { inject } from "inversify"
-import { httpGet, httpPost, BaseHttpController, interfaces, controller, httpPut, httpDelete } from "inversify-express-utils"
+import { httpGet, httpPost, BaseHttpController, controller, httpPut, httpDelete } from "inversify-express-utils"
 import TYPES from "@/app/modules/common/types"
+import InReportMiddleware from "../middlewares/in-report.middleware"
+import OutReportLogMiddleware from "../middlewares/out-report.middleware"
 
 @controller('')
 export class CardController extends BaseHttpController implements CardControllerMethods {
@@ -48,7 +49,7 @@ export class CardController extends BaseHttpController implements CardController
     }
   }
 
-  @httpPut('/cards/:id')
+  @httpPut('/cards/:id', InReportMiddleware.execute, OutReportLogMiddleware.execute)
   async updateCard (req: Request, res: Response, next: NextFunction): Promise<Response<boolean>> {
     try {
       const updatedDto: UpdateCardDto = {
@@ -56,14 +57,14 @@ export class CardController extends BaseHttpController implements CardController
         id: req.params.id
 
       }
-      const isUpdated = await this._cardService.updateCard(updatedDto)
-      return res.json(isUpdated)
+      const card = await this._cardService.updateCard(updatedDto)
+      return res.json(card)
     } catch (error) {
       return errorHandlerMiddleware.returnError(error, req, res, next)
     }
   }
 
-  @httpDelete('/cards/:id')
+  @httpDelete('/cards/:id', InReportMiddleware.execute, OutReportLogMiddleware.execute)
   async deleteCard (req: Request, res: Response, next: NextFunction): Promise<Response<boolean>> {
     try {
       const isDeleted = await this._cardService.deleteCard(req.params.id)

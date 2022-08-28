@@ -7,6 +7,6 @@ export interface CardServiceMethods extends BaseServiceMethods{
     createCard(data: CreateCardDto): Promise<Card | Card[]>;
     findAllCards(): Promise<Card[]>;
     findOneCard(id: string): Promise<Card>;
-    deleteCard(id: string): Promise<boolean>;
-    updateCard(data: UpdateCardDto): Promise<boolean>;
+    deleteCard(id: string): Promise<Card[]>;
+    updateCard(data: UpdateCardDto): Promise<Card>;
 }

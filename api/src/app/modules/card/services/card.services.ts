@@ -6,7 +6,6 @@ import { BaseService } from "../../common/base.service"
 import { Card } from "../card.entity"
 import { CreateCardDto } from "../dto/create-card.dto"
 import { UpdateCardDto } from "../dto/update-card.dto"
-import { CardRepository } from "../repository/card.repository"
 import { CardRepositoryMethods } from "../repository/card-repository.interface"
 import { CardServiceMethods } from "./services.interface"
 import { injectable, inject } from "inversify"
@@ -20,17 +19,16 @@ export class CardService extends BaseService implements CardServiceMethods {
         @inject(TYPES.CardRepositoryInterface) cardRepository: CardRepositoryMethods
   ) {
     super(cardRepository)
-
     this._cardRepository = cardRepository
   }
 
   async createCard (data: CreateCardDto): Promise<Card | Card[]> {
     const card = await this._cardRepository.create(data)
     if (!card) {
-      throw new APIError("NOT_FOUND",
-        HttpStatusCode.NOT_FOUND,
+      throw new APIError("UNPROCESSABLE_ENTITY",
+        HttpStatusCode.UNPROCESSABLE_ENTITY,
         true,
-        businessError.ENTITY_NOT_FOUND,
+        businessError.UNPROCESSABLE_ENTITY,
         undefined
       )
     }
@@ -44,17 +42,17 @@ export class CardService extends BaseService implements CardServiceMethods {
   async findOneCard (id: string): Promise<Card> {
     const card = await this._cardRepository.findOne(id)
     if (!card) {
-      throw new APIError("UNPROCESSABLE_ENTITY",
-        HttpStatusCode.UNPROCESSABLE_ENTITY,
+      throw new APIError("NOT_FOUND",
+        HttpStatusCode.NOT_FOUND,
         true,
-        businessError.UNPROCESSABLE_ENTITY,
+        businessError.ENTITY_NOT_FOUND,
         undefined
       )
     }
     return card
   }
 
-  async updateCard (data: UpdateCardDto): Promise<boolean> {
+  async updateCard (data: UpdateCardDto): Promise<Card> {
     const cardExists = await this.findOneCard(data.id)
     if (!cardExists) {
       throw new APIError("NOT_FOUND",
@@ -73,10 +71,11 @@ export class CardService extends BaseService implements CardServiceMethods {
         undefined
       )
     }
-    return Boolean(cardIsUpdated)
+    const updatedCard = await this.findOneCard(data.id)
+    return updatedCard
   }
 
-  async deleteCard (id: string): Promise<boolean> {
+  async deleteCard (id: string): Promise<Card[]> {
     const cardExists = await this.findOneCard(id)
     if (!cardExists) {
       throw new APIError("NOT_FOUND",
@@ -95,6 +94,7 @@ export class CardService extends BaseService implements CardServiceMethods {
         undefined
       )
     }
-    return Boolean(cardIsDeleted)
+    const cards = await this.findAllCards()
+    return cards
   }
 }
