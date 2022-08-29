@@ -53,6 +53,9 @@ export class App {
         })
       )
       app.use(bodyParser.json())
+      app.use("/health", (_, res) => {
+        res.status(200).send("ok")
+      })
       app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
       app.use(errorHandlerMiddleware.logErrorMiddleware)
       app.use(errorHandlerMiddleware.returnError)
