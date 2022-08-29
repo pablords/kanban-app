@@ -342,6 +342,55 @@
                     }
                 }
             }
+        },
+        "/login": {
+            "post": {
+                "summary": "Autentica um ususario",
+                "description": "Rota responsável por autenticar um usuario",
+                "tags": ["Auth"],
+                "requestBody": {
+                    "content": {
+                        "application/json; charset=utf-8": {
+                            "schema": {
+                                "properties": {
+                                    "login": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "UNPROCESSABLE_ENTITY"
+                    },
+                    "400": {
+                        "description": "BAD_REQUEST"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "aplication/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "token": {
+                                            "type": "string"
+                                        },
+                                        "expiresIn": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
