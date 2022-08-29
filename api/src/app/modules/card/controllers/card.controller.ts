@@ -11,6 +11,7 @@ import TYPES from "@/app/modules/common/types"
 import InReportMiddleware from "../middlewares/in-report.middleware"
 import OutReportLogMiddleware from "../middlewares/out-report.middleware"
 import ValidateFieldsMiddleware from "../middlewares/validate-fields.middleware"
+import AuthMiddleware from "@/app/modules/auth/middlewares/auth.middleware"
 
 @controller('')
 export class CardController extends BaseHttpController implements CardControllerMethods {
@@ -24,13 +25,13 @@ export class CardController extends BaseHttpController implements CardController
     this._cardService = cardService
   }
 
-  @httpGet('/cards')
+  @httpGet('/cards', AuthMiddleware.execute)
   async getAllCards (req: Request, res: Response): Promise<Response<Card[]>> {
     const cards = await this._cardService.findAllCards()
     return res.json(cards)
   }
 
-  @httpPost('/cards', ValidateFieldsMiddleware.execute)
+  @httpPost('/cards', AuthMiddleware.execute, ValidateFieldsMiddleware.execute)
   async createCard (req: Request, res: Response, next: NextFunction): Promise<Response<Card>> {
     try {
       const card = await this._cardService.createCard(req.body)
@@ -40,7 +41,7 @@ export class CardController extends BaseHttpController implements CardController
     }
   }
 
-  @httpGet('/cards/:id')
+  @httpGet('/cards/:id', AuthMiddleware.execute)
   async getOneCard (req: Request, res: Response, next: NextFunction): Promise<Response<Card>> {
     try {
       const card = await this._cardService.findOneCard(req.params.id)
@@ -50,7 +51,7 @@ export class CardController extends BaseHttpController implements CardController
     }
   }
 
-  @httpPut('/cards/:id', InReportMiddleware.execute, OutReportLogMiddleware.execute, ValidateFieldsMiddleware.execute)
+  @httpPut('/cards/:id', AuthMiddleware.execute, InReportMiddleware.execute, OutReportLogMiddleware.execute, ValidateFieldsMiddleware.execute)
   async updateCard (req: Request, res: Response, next: NextFunction): Promise<Response<boolean>> {
     try {
       const updatedDto: UpdateCardDto = {
@@ -65,7 +66,7 @@ export class CardController extends BaseHttpController implements CardController
     }
   }
 
-  @httpDelete('/cards/:id', InReportMiddleware.execute, OutReportLogMiddleware.execute)
+  @httpDelete('/cards/:id', AuthMiddleware.execute, InReportMiddleware.execute, OutReportLogMiddleware.execute)
   async deleteCard (req: Request, res: Response, next: NextFunction): Promise<Response<boolean>> {
     try {
       const isDeleted = await this._cardService.deleteCard(req.params.id)
