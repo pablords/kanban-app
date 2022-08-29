@@ -1,7 +1,7 @@
 const AUTH_URL = 'http://localhost:5000/login';
 const CARD_URL = 'http://localhost:5000/cards';
 
-const CREDENTIAL = { login: 'letscode', senha: 'lets@123' };
+const CREDENTIAL = { login: 'letscode', password: 'lets@123' };
 
 const DEFAULT_HEADERS = {
     'Accept': 'application/json',
