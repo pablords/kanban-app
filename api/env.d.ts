@@ -12,6 +12,9 @@ declare global {
         DB_PASSWORD: string
         DB_LOGGING: boolean | "all" | Array<("query" | "schema" | "error" | "warn" | "info" | "log" | "migration")>
         TIMEZONE: string
+        SECRET_API: string
+        LOGIN: string
+        PASSWORD: string
       }
     }
   }
