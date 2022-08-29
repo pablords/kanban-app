@@ -3,21 +3,15 @@ import "reflect-metadata"
 import { Container } from "inversify"
 import TYPES from "../../common/types"
 import { CardController } from "./card.controller"
-import { CardControllerMethods } from "./card-controller.interface"
 import { CardRepository } from "../repository/card.repository"
-import { Card } from "../card.entity"
 import { APIError } from "@/app/exceptions/base-error"
 import { HttpStatusCode } from "@/app/exceptions/interfaces"
 import businessError from "@/app/exceptions/business-error"
-import { UpdateCardDto } from "../dto/update-card.dto"
 import { randomUUID } from "crypto"
 import { CardEntityOrm } from "@/app/infra/entities/card.entity.orm"
 import { CardService } from "../services/card.service"
-import { CardServiceMethods } from "../services/services.interface"
 import { interfaces, request } from "inversify-express-utils"
 import { getMockReq, getMockRes } from "@jest-mock/express"
-import { entityManager } from "@/config/db"
-import { Repository } from "typeorm"
 import { CreateCardDto } from "../dto/create-card.dto"
 
 const card: CardEntityOrm = {
@@ -28,9 +22,6 @@ const card: CardEntityOrm = {
   updatedAt: new Date(),
   id: randomUUID()
 }
-
-const MockRepositoryOrm = entityManager.getRepository(CardEntityOrm)
-const mockRepositoryOrm = MockRepositoryOrm as jest.Mocked<Repository<CardEntityOrm>>
 
 const mockRepository = jest.mocked(new CardRepository())
 const cardServiceMock = jest.mocked(new CardService(mockRepository))
@@ -48,7 +39,6 @@ const mockUser: interfaces.Principal = {
 const { res, next, clearMockRes, mockClear } = getMockRes()
 
 describe("CardService", () => {
-  let CardRepositoryMock: CardRepository
   let CardServiceMock: CardService
   let container: Container = null
 
@@ -62,10 +52,6 @@ describe("CardService", () => {
     }
     container.bind<CardController>(TYPES.CardControllerInterface).to(CardController)
     container.bind<CardService>(TYPES.CardServiceInterface).toConstantValue(CardServiceMock)
-    container
-      .bind<CardRepository>(TYPES.CardRepositoryInterface)
-      .toConstantValue(CardRepositoryMock)
-
     container.bind<interfaces.HttpContext>(Symbol.for("HttpContext")).toConstantValue(mockedHttpContext)
 
     jest.clearAllMocks()
@@ -84,6 +70,32 @@ describe("CardService", () => {
       await controller.getAllCards(req, res, next)
       expect(res.json).toBeCalledWith([card])
     })
+
+    it("Should return a exception does not get all cards", async () => {
+      jest.spyOn(cardServiceMock, "findAllCards").mockRejectedValueOnce(
+        new APIError("NOT_FOUND",
+          HttpStatusCode.NOT_FOUND,
+          true,
+          businessError.ENTITY_NOT_FOUND,
+          undefined
+        )
+      )
+      const controller: CardController = container.get(
+        TYPES.CardControllerInterface
+      )
+      try {
+        const req = getMockReq()
+        await controller.getAllCards(req, res, next)
+        expect(res.json).toBeCalledWith(
+          new APIError("NOT_FOUND",
+            HttpStatusCode.NOT_FOUND,
+            true,
+            businessError.ENTITY_NOT_FOUND,
+            undefined
+          )
+        )
+      } catch (err) {}
+    })
   })
 
   describe("When get a card", () => {
@@ -95,6 +107,32 @@ describe("CardService", () => {
       const req = getMockReq()
       await controller.getOneCard(req, res, next)
       expect(res.json).toBeCalledWith(card)
+    })
+
+    it("Should return a exception when does not find a card", async () => {
+      jest.spyOn(cardServiceMock, "findOneCard").mockRejectedValueOnce(
+        new APIError("NOT_FOUND",
+          HttpStatusCode.NOT_FOUND,
+          true,
+          businessError.ENTITY_NOT_FOUND,
+          undefined
+        )
+      )
+      const controller: CardController = container.get(
+        TYPES.CardControllerInterface
+      )
+      const req = getMockReq()
+      try {
+        await controller.getOneCard(req, res, next)
+        expect(res.json).toBeCalledWith(
+          new APIError("NOT_FOUND",
+            HttpStatusCode.NOT_FOUND,
+            true,
+            businessError.ENTITY_NOT_FOUND,
+            undefined
+          )
+        )
+      } catch (err) {}
     })
   })
 
@@ -109,6 +147,32 @@ describe("CardService", () => {
       })
       await controller.createCard(req, res, next)
       expect(res.json).toBeCalledWith(card)
+    })
+
+    it("Should return a exception when does not created card", async () => {
+      jest.spyOn(cardServiceMock, "createCard").mockRejectedValueOnce(
+        new APIError("UNPROCESSABLE_ENTITY",
+          HttpStatusCode.UNPROCESSABLE_ENTITY,
+          true,
+          businessError.UNPROCESSABLE_ENTITY,
+          undefined
+        )
+      )
+      const controller: CardController = container.get(
+        TYPES.CardControllerInterface
+      )
+      const req = getMockReq({
+        body: { content: "content", list: "list", title: "title" } as CreateCardDto
+      })
+      try {
+        await controller.createCard(req, res, next)
+        expect(res.json).toBeCalledWith(new APIError("UNPROCESSABLE_ENTITY",
+          HttpStatusCode.UNPROCESSABLE_ENTITY,
+          true,
+          businessError.UNPROCESSABLE_ENTITY,
+          undefined
+        ))
+      } catch (err) {}
     })
   })
 
@@ -125,6 +189,35 @@ describe("CardService", () => {
       await controller.updateCard(req, res, next)
       expect(res.json).toBeCalledWith(card)
     })
+
+    it("Should return a exception when does not update card", async () => {
+      jest.spyOn(cardServiceMock, "updateCard").mockRejectedValueOnce(
+        new APIError("UNPROCESSABLE_ENTITY",
+          HttpStatusCode.UNPROCESSABLE_ENTITY,
+          true,
+          businessError.UNPROCESSABLE_ENTITY,
+          undefined
+        )
+      )
+      const controller: CardController = container.get(
+        TYPES.CardControllerInterface
+      )
+      const req = getMockReq({
+        body: { content: "content", list: "list", title: "title" } as CreateCardDto,
+        params: { id: card.id }
+      })
+      try {
+        await controller.updateCard(req, res, next)
+        expect(res.json).toBeCalledWith(
+          new APIError("UNPROCESSABLE_ENTITY",
+            HttpStatusCode.UNPROCESSABLE_ENTITY,
+            true,
+            businessError.UNPROCESSABLE_ENTITY,
+            undefined
+          )
+        )
+      } catch (err) {}
+    })
   })
 
   describe("When delete a card", () => {
@@ -139,6 +232,35 @@ describe("CardService", () => {
       })
       await controller.deleteCard(req, res, next)
       expect(res.json).toBeCalledWith([card])
+    })
+
+    it("Should return a exception when does not delete card", async () => {
+      jest.spyOn(cardServiceMock, "deleteCard").mockRejectedValueOnce(
+        new APIError("UNPROCESSABLE_ENTITY",
+          HttpStatusCode.UNPROCESSABLE_ENTITY,
+          true,
+          businessError.UNPROCESSABLE_ENTITY,
+          undefined
+        )
+      )
+      const controller: CardController = container.get(
+        TYPES.CardControllerInterface
+      )
+      const req = getMockReq({
+        body: { content: "content", list: "list", title: "title" } as CreateCardDto,
+        params: { id: card.id }
+      })
+      try {
+        await controller.deleteCard(req, res, next)
+        expect(res.json).toBeCalledWith(
+          new APIError("UNPROCESSABLE_ENTITY",
+            HttpStatusCode.UNPROCESSABLE_ENTITY,
+            true,
+            businessError.UNPROCESSABLE_ENTITY,
+            undefined
+          )
+        )
+      } catch (err) {}
     })
   })
 })

@@ -26,9 +26,13 @@ export class CardController extends BaseHttpController implements CardController
   }
 
   @httpGet('/cards', AuthMiddleware.execute)
-  async getAllCards (req: Request, res: Response): Promise<Response<Card[]>> {
-    const cards = await this._cardService.findAllCards()
-    return res.json(cards)
+  async getAllCards (req: Request, res: Response, next: NextFunction): Promise<Response<Card[]>> {
+    try {
+      const cards = await this._cardService.findAllCards()
+      return res.json(cards)
+    } catch (error) {
+      return errorHandlerMiddleware.returnError(error, req, res, next)
+    }
   }
 
   @httpPost('/cards', AuthMiddleware.execute, ValidateFieldsMiddleware.execute)

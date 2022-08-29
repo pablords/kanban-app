@@ -36,7 +36,16 @@ export class CardService extends BaseService implements CardServiceMethods {
   }
 
   async findAllCards (): Promise<Card[]> {
-    return await this._cardRepository.find()
+    const cards = await this._cardRepository.find()
+    if (!cards.length) {
+      throw new APIError("NOT_FOUND",
+        HttpStatusCode.NOT_FOUND,
+        true,
+        businessError.ENTITY_NOT_FOUND,
+        undefined
+      )
+    }
+    return cards
   }
 
   async findOneCard (id: string): Promise<Card> {
