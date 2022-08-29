@@ -5,7 +5,8 @@ const TYPES = {
   CardRepositoryInterface: Symbol.for("CardRepositoryInterface"),
   CardRepositoryOrmInterface: Symbol.for("CardRepositoryOrmInterface"),
   AuthControllerInterface: Symbol.for("AuthControllerInterface"),
-  AuthServiceInterface: Symbol.for("AuthServiceInterface")
+  AuthServiceInterface: Symbol.for("AuthServiceInterface"),
+  AuthRepositoryInterface: Symbol.for("AuthRepositoryInterface")
 }
 
 export default TYPES

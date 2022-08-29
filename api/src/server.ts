@@ -15,6 +15,8 @@ import { CardRepositoryMethods } from "./app/modules/card/repository/card-reposi
 import { CardRepository } from "./app/modules/card/repository/card.repository"
 import { AuthServiceMethods } from "./app/modules/auth/services/auth-service.interface"
 import { AuthService } from "./app/modules/auth/services/auth.service"
+import { AuthRepositoryMethods } from "./app/modules/auth/repository/auth-repository.interface"
+import { AuthRepository } from "./app/modules/auth/repository/auth.repository"
 
 import swaggerUi from "swagger-ui-express"
 import swaggerDocument from "./docs/swagger.json"
@@ -37,6 +39,7 @@ export class App {
     container
       .bind<AuthServiceMethods>(TYPES.AuthServiceInterface)
       .to(AuthService)
+    container.bind<AuthRepositoryMethods>(TYPES.AuthRepositoryInterface).to(AuthRepository)
   }
 
   createServer (): void {

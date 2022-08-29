@@ -3,6 +3,7 @@ import { DataSource } from "typeorm"
 import "dotenv/config"
 import { logger } from "./logger"
 import { CardEntityOrm } from "@/app/infra/entities/card.entity.orm"
+import { AuthEntityOrm } from "@/app/infra/entities/auth.entity.orm"
 
 declare type LoggerOptions = boolean | "all" | Array<("query" | "schema" | "error" | "warn" | "info" | "log" | "migration")>;
 
@@ -13,7 +14,7 @@ export const connection = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  entities: [CardEntityOrm],
+  entities: [CardEntityOrm, AuthEntityOrm],
   synchronize: true,
   logging: process.env.DB_LOGGING as LoggerOptions,
   timezone: process.env.TIMEZONE,
