@@ -1,0 +1,347 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Kanban Api",
+        "description": "Api para gerenciamento de cards kanban",
+        "termsOfService": "https://github.com/pablords/kanban-app",
+        "contact": {
+            "name": "API Support",
+            "url": "https://github.com/pablords/kanban-app",
+            "email": "pablords@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:5000",
+            "description": "Api de teste"
+        },
+        {
+            "url": "http://10.0.0.172:5000",
+            "description": "Api de produção"
+        }
+    ],
+    "paths": {
+        "/cards": {
+            "get": {
+                "summary": "Listagem de cartões",
+                "description": "Rota responsável por listar todos cartões armazenados no banco de dados",
+                "tags": ["Cards"],
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "token de acesso",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "401": {
+                        "description": "TOKEN_NOT_FOUND"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "aplication/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "title": {
+                                            "type": "string"
+                                        },
+                                        "content": {
+                                            "type": "string"
+                                        },
+                                        "list": {
+                                            "type": "string"
+                                        },
+                                        "createdAt": {
+                                            "type": "string"
+                                        },
+                                        "updatedAt": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Cria um novo cartão",
+                "description": "Rota responsável por criar um novo cartão",
+                "tags": ["Cards"],
+                "requestBody": {
+                    "content": {
+                        "application/json; charset=utf-8": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "content": {
+                                        "type": "string"
+                                    },
+                                    "list": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "token de acesso",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "description": "UNPROCESSABLE_ENTITY"
+                    },
+                    "401": {
+                        "description": "TOKEN_NOT_FOUND"
+                    },
+                    "400": {
+                        "description": "BAD_REQUEST"
+                    },
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "aplication/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "title": {
+                                            "type": "string"
+                                        },
+                                        "content": {
+                                            "type": "string"
+                                        },
+                                        "list": {
+                                            "type": "string"
+                                        },
+                                        "createdAt": {
+                                            "type": "string"
+                                        },
+                                        "updatedAt": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/cards/{id}": {
+            "get": {
+                "summary": "Busca de um cartão pelo id",
+                "description": "Rota responsável por buscar um cartão pelo id",
+                "tags": ["Cards"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id do cartão",
+                        "required": true
+                    },
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "token de acesso",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "ENTITY_NOT_FOUND"
+                    },
+                    "401": {
+                        "description": "TOKEN_NOT_FOUND"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "aplication/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "title": {
+                                            "type": "string"
+                                        },
+                                        "content": {
+                                            "type": "string"
+                                        },
+                                        "list": {
+                                            "type": "string"
+                                        },
+                                        "createdAt": {
+                                            "type": "string"
+                                        },
+                                        "updatedAt": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Atualiza um Cartão",
+                "description": "Rota responsável por atualizar um cartão.",
+                "tags": ["Cards"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id do cartão",
+                        "required": true
+                    },
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "token de acesso",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json; charset=utf-8": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "content": {
+                                        "type": "string"
+                                    },
+                                    "list": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "404": {
+                        "description": "ENTITY_NOT_FOUND"
+                    },
+                    "401": {
+                        "description": "TOKEN_NOT_FOUND"
+                    },
+                    "400": {
+                        "description": "BAD_REQUEST"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "aplication/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "title": {
+                                            "type": "string"
+                                        },
+                                        "content": {
+                                            "type": "string"
+                                        },
+                                        "list": {
+                                            "type": "string"
+                                        },
+                                        "createdAt": {
+                                            "type": "string"
+                                        },
+                                        "updatedAt": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Deleta um cartão",
+                "description": "Rota responsável por deletar um cartão",
+                "tags": ["Cards"],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "id do cartão",
+                        "required": true
+                    },
+                    {
+                        "name": "token",
+                        "in": "header",
+                        "description": "token de acesso",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "404": {
+                        "description": "ENTITY_NOT_FOUND"
+                    },
+                    "401": {
+                        "description": "TOKEN_NOT_FOUND"
+                    },
+                    "400": {
+                        "description": "BAD_REQUEST"
+                    },
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "aplication/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {
+                                            "type": "string"
+                                        },
+                                        "title": {
+                                            "type": "string"
+                                        },
+                                        "content": {
+                                            "type": "string"
+                                        },
+                                        "list": {
+                                            "type": "string"
+                                        },
+                                        "createdAt": {
+                                            "type": "string"
+                                        },
+                                        "updatedAt": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

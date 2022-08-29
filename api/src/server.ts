@@ -16,6 +16,9 @@ import { CardRepository } from "./app/modules/card/repository/card.repository"
 import { AuthServiceMethods } from "./app/modules/auth/services/auth-service.interface"
 import { AuthService } from "./app/modules/auth/services/auth.service"
 
+import swaggerUi from "swagger-ui-express"
+import swaggerDocument from "./docs/swagger.json"
+
 const container = new Container()
 
 export class App {
@@ -25,18 +28,29 @@ export class App {
   }
 
   configDependencies (): void {
-    container.bind<CardServiceMethods>(TYPES.CardServiceInterface).to(CardService)
-    container.bind<CardRepositoryMethods>(TYPES.CardRepositoryInterface).to(CardRepository)
-    container.bind<AuthServiceMethods>(TYPES.AuthServiceInterface).to(AuthService)
+    container
+      .bind<CardServiceMethods>(TYPES.CardServiceInterface)
+      .to(CardService)
+    container
+      .bind<CardRepositoryMethods>(TYPES.CardRepositoryInterface)
+      .to(CardRepository)
+    container
+      .bind<AuthServiceMethods>(TYPES.AuthServiceInterface)
+      .to(AuthService)
   }
 
   createServer (): void {
-    const server: InversifyExpressServer = new InversifyExpressServer(container)
+    const server: InversifyExpressServer = new InversifyExpressServer(
+      container
+    )
     server.setConfig((app) => {
-      app.use(bodyParser.urlencoded({
-        extended: true
-      }))
+      app.use(
+        bodyParser.urlencoded({
+          extended: true
+        })
+      )
       app.use(bodyParser.json())
+      app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
       app.use(errorHandlerMiddleware.logErrorMiddleware)
       app.use(errorHandlerMiddleware.returnError)
     })

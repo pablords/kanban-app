@@ -7,8 +7,13 @@ import jwt from "jsonwebtoken"
 
 class AuthMiddleware {
   async execute (req: Request, res: Response, next: NextFunction) {
+    let token
     try {
-      const token = req.headers?.authorization?.split(" ")[1]
+      if (req.headers.authorization) {
+        token = req.headers?.authorization?.split(" ")[1]
+      } else {
+        token = req.headers.token
+      }
       if (!token) {
         throw new APIError("UNAUTHORIZED",
           HttpStatusCode.UNAUTHORIZED,
