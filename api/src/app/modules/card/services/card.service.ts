@@ -53,15 +53,7 @@ export class CardService extends BaseService implements CardServiceMethods {
   }
 
   async updateCard (data: UpdateCardDto): Promise<Card> {
-    const cardExists = await this.findOneCard(data.id)
-    if (!cardExists) {
-      throw new APIError("NOT_FOUND",
-        HttpStatusCode.NOT_FOUND,
-        true,
-        businessError.ENTITY_NOT_FOUND,
-        undefined
-      )
-    }
+    await this.findOneCard(data.id)
     const cardIsUpdated = await this._cardRepository.update(data)
     if (!cardIsUpdated) {
       throw new APIError("UNPROCESSABLE_ENTITY",
@@ -76,15 +68,7 @@ export class CardService extends BaseService implements CardServiceMethods {
   }
 
   async deleteCard (id: string): Promise<Card[]> {
-    const cardExists = await this.findOneCard(id)
-    if (!cardExists) {
-      throw new APIError("NOT_FOUND",
-        HttpStatusCode.NOT_FOUND,
-        true,
-        businessError.ENTITY_NOT_FOUND,
-        undefined
-      )
-    }
+    await this.findOneCard(id)
     const cardIsDeleted = await this._cardRepository.delete(id)
     if (!cardIsDeleted) {
       throw new APIError("UNPROCESSABLE_ENTITY",

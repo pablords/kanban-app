@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
       "lib": ["es6", "dom"],
-      "types": ["reflect-metadata"],
+      "types": ["reflect-metadata", "jest", "node"],
       "target": "es5",
       "downlevelIteration": true,
       "module": "commonjs", /* Specify what module code is generated. */
@@ -20,6 +20,9 @@
       "paths": {
         "@/*": [
           "src/*"
+        ],
+        "@test/*": [
+          "__test__/*"
         ],
       }
     },

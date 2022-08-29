@@ -1,10 +1,7 @@
 import { Card } from "@/app/modules/card/card.entity"
 import {
   Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn
+  Column
 } from "typeorm"
 import { BaseEntityOrm } from "./base-entity.orm"
 

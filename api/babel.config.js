@@ -6,7 +6,8 @@ module.exports = {
   plugins: [
     ["module-resolver", {
       alias: {
-        "@": "./src/"
+        "@": "./src/",
+        "@test": "./__test__/"
       }
     }],
     ["@babel/plugin-proposal-decorators", { legacy: true }],
